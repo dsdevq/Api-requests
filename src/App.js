@@ -1,6 +1,22 @@
 import { useEffect, useState } from "react"
 import "./App.css"
 
+function quickSort(arr) {
+	if (arr.length < 2) return arr
+	let pivot = arr[0]
+	const left = []
+	const right = []
+
+	for (let i = 1; i < arr.length; i++) {
+		if (pivot.id > arr[i].id) {
+			left.push(arr[i])
+		} else {
+			right.push(arr[i])
+		}
+	}
+	return [...quickSort(right), pivot, ...quickSort(left)]
+}
+
 function App() {
 	const [posts, setPosts] = useState([])
 
@@ -8,13 +24,15 @@ function App() {
 		//$ GET
 		async function fetchData() {
 			const response = await fetch(
-				"https://jsonplaceholder.typicode.com/posts?_limit=8"
+				"https://jsonplaceholder.typicode.com/posts?_limit=10"
 			)
 			const result = await response.json()
-			setPosts(result)
+			setPosts(quickSort(result))
 		}
 		fetchData()
 	}, [])
+	console.log(posts)
+
 	//$ DELETE
 	const deleteTodo = async (id) => {
 		const response = await fetch(
@@ -28,6 +46,7 @@ function App() {
 			console.log("DELETE OKAY", response)
 		}
 	}
+
 	//$ POST
 	const addTodo = async (title) => {
 		const response = await fetch(`https://jsonplaceholder.typicode.com/posts`, {
@@ -47,6 +66,7 @@ function App() {
 			console.log("POST OKAY", response)
 		}
 	}
+
 	//$ PUT
 	const changeTodo = async (id) => {
 		const response = await fetch(
@@ -73,6 +93,7 @@ function App() {
 			console.log("PUT OKAY", response)
 		}
 	}
+
 	// $ PATCH
 	const patchTodo = async (id) => {
 		const response = await fetch(
@@ -114,6 +135,13 @@ function App() {
 				{posts &&
 					posts.map((post) => (
 						<div className='todo' key={post.id}>
+							<strong
+								style={{
+									background: "orange",
+									padding: "5px",
+								}}>
+								{post.id}
+							</strong>
 							<h2>TITLE</h2>
 							<p>{post.title}</p>
 							<h2>BODY</h2>
